@@ -1,0 +1,410 @@
+AWS RESOURCE TYPES QUICK REFERENCE
+===================================
+
+COMPUTE RESOURCES
+-----------------
+
+aws_instance
+  - EC2 virtual machine
+  - Required: ami, instance_type
+  - Common: vpc_security_group_ids, subnet_id, key_name, user_data
+  - Example: Web servers, app servers, databases
+
+aws_launch_template
+  - Template for EC2 instances
+  - Used with Auto Scaling
+  - Required: name or name_prefix
+  - Common: image_id, instance_type, network_interfaces
+
+aws_autoscaling_group
+  - Manages EC2 instance scaling
+  - Required: max_size, min_size
+  - Common: desired_capacity, health_check_type, vpc_zone_identifier
+
+aws_lambda_function
+  - Serverless function
+  - Required: function_name, role, handler, runtime
+  - Common: environment, timeout, memory_size
+
+aws_ecs_cluster
+  - Container orchestration cluster
+  - Required: name
+  - Common: capacity_providers, settings
+
+aws_ecs_task_definition
+  - ECS task definition
+  - Required: family, container_definitions
+  - Common: cpu, memory, network_mode, requires_compatibilities
+
+aws_ecs_service
+  - ECS service
+  - Required: name, cluster
+  - Common: desired_count, launch_type, load_balancer
+
+STORAGE RESOURCES
+-----------------
+
+aws_s3_bucket
+  - Object storage bucket
+  - Required: bucket
+  - Common: tags, force_destroy
+
+aws_s3_bucket_versioning
+  - S3 bucket versioning
+  - Required: bucket, versioning_configuration
+
+aws_s3_bucket_server_side_encryption_configuration
+  - S3 encryption
+  - Required: bucket, rule
+
+aws_ebs_volume
+  - EC2 block storage
+  - Required: availability_zone
+  - Common: size, type, encrypted, snapshot_id
+
+aws_ebs_snapshot
+  - EBS snapshot
+  - Required: volume_id
+  - Common: description, tags
+
+aws_efs_file_system
+  - Elastic File System
+  - Common: encrypted, performance_mode, throughput_mode
+
+aws_efs_mount_target
+  - EFS mount point
+  - Required: file_system_id, subnet_id
+  - Common: security_groups
+
+NETWORKING RESOURCES
+--------------------
+
+aws_vpc
+  - Virtual Private Cloud
+  - Required: cidr_block
+  - Common: enable_dns_support, enable_dns_hostnames
+
+aws_subnet
+  - VPC subnet
+  - Required: vpc_id, cidr_block
+  - Common: availability_zone, map_public_ip_on_launch
+
+aws_internet_gateway
+  - Internet gateway for VPC
+  - Required: vpc_id
+  - Common: tags
+
+aws_nat_gateway
+  - NAT gateway
+  - Required: allocation_id, subnet_id
+  - Common: tags
+
+aws_route_table
+  - Route table
+  - Required: vpc_id
+  - Common: route blocks
+
+aws_route_table_association
+  - Associate subnet with route table
+  - Required: subnet_id, route_table_id
+
+aws_security_group
+  - Virtual firewall
+  - Required: name or name_prefix
+  - Common: description, vpc_id, ingress, egress
+
+aws_security_group_rule
+  - Security group rule
+  - Required: type, from_port, to_port, protocol, security_group_id
+  - Common: cidr_blocks, source_security_group_id
+
+aws_lb (Application/Network Load Balancer)
+  - Load balancer
+  - Required: name, load_balancer_type
+  - Common: subnets, security_groups, internal
+
+aws_lb_target_group
+  - Load balancer target group
+  - Required: name, port, protocol, vpc_id
+  - Common: health_check
+
+aws_lb_listener
+  - Load balancer listener
+  - Required: load_balancer_arn, port, protocol, default_action
+  - Common: ssl_policy, certificate_arn
+
+aws_eip
+  - Elastic IP address
+  - Common: vpc, instance, network_interface
+
+aws_route53_zone
+  - DNS hosted zone
+  - Required: name
+  - Common: vpc, tags
+
+aws_route53_record
+  - DNS record
+  - Required: zone_id, name, type
+  - Common: ttl, records, alias
+
+DATABASE RESOURCES
+------------------
+
+aws_db_instance
+  - RDS database instance
+  - Required: instance_class, engine
+  - Common: allocated_storage, username, password, multi_az
+
+aws_db_subnet_group
+  - RDS subnet group
+  - Required: name, subnet_ids
+  - Common: description, tags
+
+aws_db_parameter_group
+  - RDS parameter group
+  - Required: name, family
+  - Common: parameter blocks
+
+aws_rds_cluster
+  - Aurora cluster
+  - Required: cluster_identifier, engine
+  - Common: master_username, master_password, database_name
+
+aws_rds_cluster_instance
+  - Aurora cluster instance
+  - Required: identifier, cluster_identifier, instance_class, engine
+  - Common: publicly_accessible
+
+aws_dynamodb_table
+  - DynamoDB NoSQL table
+  - Required: name, hash_key
+  - Common: billing_mode, range_key, attribute, global_secondary_index
+
+aws_elasticache_cluster
+  - ElastiCache cluster
+  - Required: cluster_id, engine
+  - Common: node_type, num_cache_nodes, parameter_group_name
+
+SECURITY & IAM RESOURCES
+------------------------
+
+aws_iam_user
+  - IAM user
+  - Required: name
+  - Common: path, tags
+
+aws_iam_group
+  - IAM group
+  - Required: name
+  - Common: path
+
+aws_iam_role
+  - IAM role
+  - Required: name, assume_role_policy
+  - Common: description, max_session_duration
+
+aws_iam_policy
+  - IAM policy
+  - Required: name, policy
+  - Common: description, path
+
+aws_iam_role_policy_attachment
+  - Attach policy to role
+  - Required: role, policy_arn
+
+aws_iam_user_policy_attachment
+  - Attach policy to user
+  - Required: user, policy_arn
+
+aws_iam_instance_profile
+  - EC2 instance profile
+  - Required: name, role
+  - Common: path
+
+aws_kms_key
+  - KMS encryption key
+  - Common: description, deletion_window_in_days, enable_key_rotation
+
+aws_kms_alias
+  - KMS key alias
+  - Required: name, target_key_id
+
+aws_secretsmanager_secret
+  - Secrets Manager secret
+  - Required: name
+  - Common: description, kms_key_id
+
+aws_secretsmanager_secret_version
+  - Secret version
+  - Required: secret_id, secret_string or secret_binary
+  - Common: version_stages
+
+MONITORING & LOGGING
+--------------------
+
+aws_cloudwatch_metric_alarm
+  - CloudWatch alarm
+  - Required: alarm_name, comparison_operator, evaluation_periods, metric_name, namespace, period, statistic, threshold
+  - Common: alarm_actions, dimensions
+
+aws_cloudwatch_log_group
+  - CloudWatch log group
+  - Required: name
+  - Common: retention_in_days, kms_key_id
+
+aws_cloudwatch_log_stream
+  - CloudWatch log stream
+  - Required: name, log_group_name
+
+aws_cloudwatch_event_rule
+  - EventBridge rule
+  - Required: name
+  - Common: schedule_expression, event_pattern
+
+aws_cloudwatch_event_target
+  - EventBridge target
+  - Required: rule, arn
+  - Common: input, role_arn
+
+aws_sns_topic
+  - SNS notification topic
+  - Required: name
+  - Common: display_name, kms_master_key_id
+
+aws_sns_topic_subscription
+  - SNS subscription
+  - Required: topic_arn, protocol, endpoint
+  - Common: filter_policy
+
+aws_sqs_queue
+  - SQS message queue
+  - Required: name
+  - Common: visibility_timeout_seconds, message_retention_seconds, fifo_queue
+
+APPLICATION RESOURCES
+---------------------
+
+aws_api_gateway_rest_api
+  - API Gateway REST API
+  - Required: name
+  - Common: description, endpoint_configuration
+
+aws_api_gateway_resource
+  - API Gateway resource
+  - Required: rest_api_id, parent_id, path_part
+
+aws_api_gateway_method
+  - API Gateway method
+  - Required: rest_api_id, resource_id, http_method, authorization
+  - Common: api_key_required
+
+aws_apigatewayv2_api
+  - API Gateway v2 (HTTP/WebSocket)
+  - Required: name, protocol_type
+  - Common: route_selection_expression
+
+aws_apigatewayv2_integration
+  - API Gateway v2 integration
+  - Required: api_id, integration_type
+  - Common: integration_uri
+
+aws_cognito_user_pool
+  - Cognito user pool
+  - Required: name
+  - Common: password_policy, email_configuration
+
+aws_cognito_user_pool_client
+  - Cognito app client
+  - Required: name, user_pool_id
+  - Common: generate_secret
+
+CONTAINER RESOURCES
+-------------------
+
+aws_ecr_repository
+  - Elastic Container Registry
+  - Required: name
+  - Common: image_tag_mutability, image_scanning_configuration
+
+aws_eks_cluster
+  - EKS Kubernetes cluster
+  - Required: name, role_arn, vpc_config
+  - Common: version, enabled_cluster_log_types
+
+aws_eks_node_group
+  - EKS node group
+  - Required: cluster_name, node_group_name, node_role_arn, subnet_ids
+  - Common: scaling_config, instance_types
+
+ANALYTICS RESOURCES
+-------------------
+
+aws_kinesis_stream
+  - Kinesis data stream
+  - Required: name, shard_count
+  - Common: retention_period, encryption_type
+
+aws_kinesis_firehose_delivery_stream
+  - Kinesis Firehose
+  - Required: name, destination
+  - Common: s3_configuration
+
+aws_athena_database
+  - Athena database
+  - Required: name, bucket
+  - Common: encryption_configuration
+
+aws_glue_catalog_database
+  - Glue data catalog
+  - Required: name
+  - Common: description, location_uri
+
+aws_glue_crawler
+  - Glue crawler
+  - Required: database_name, name, role, s3_target
+  - Common: schedule
+
+BACKUP & RECOVERY
+-----------------
+
+aws_backup_plan
+  - Backup plan
+  - Required: name, rule
+  - Common: tags
+
+aws_backup_vault
+  - Backup vault
+  - Required: name
+  - Common: kms_key_arn
+
+aws_backup_selection
+  - Backup selection
+  - Required: name, plan_id, iam_role_arn, resources
+  - Common: selection_tag
+
+OTHER USEFUL RESOURCES
+----------------------
+
+aws_acm_certificate
+  - ACM SSL/TLS certificate
+  - Required: domain_name, validation_method
+  - Common: subject_alternative_names
+
+aws_waf_web_acl
+  - WAF web ACL
+  - Required: name, scope
+  - Common: default_action, rule
+
+random_id
+random_string
+random_password
+  - Generate random values
+  - Useful for unique naming
+
+null_resource
+  - Execute provisioners
+  - Used for custom scripts
+
+time_sleep
+  - Add delays between resources
+  - Useful for API propagation
