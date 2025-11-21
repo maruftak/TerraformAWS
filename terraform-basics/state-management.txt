@@ -4,8 +4,9 @@ TERRAFORM STATE MANAGEMENT GUIDE
 WHAT IS TERRAFORM STATE?
 ------------------------
 
-Terraform state is a JSON file that maps real-world resources to your configuration.
-It tracks metadata and improves performance for large infrastructures.
+Terraform state is a file that maps real-world resources to your configuration,
+typically stored in JSON format for local backends or in backend-specific formats
+for remote backends. It tracks metadata and improves performance for large infrastructures.
 
 Default state file: terraform.tfstate
 Backup file: terraform.tfstate.backup

@@ -121,14 +121,12 @@ COMMON TERRAFORM PATTERNS
      }
    }
 
-6. TEMPLATE FILES
-   data "template_file" "user_data" {
-     template = file("${path.module}/user_data.sh")
-     
-     vars = {
-       db_endpoint = aws_db_instance.main.endpoint
-     }
-   }
+6. TEMPLATE FILES (Use templatefile function)
+   user_data = templatefile("${path.module}/user_data.sh", {
+     db_endpoint = aws_db_instance.main.endpoint
+   })
+   
+   # For older versions (<0.12), use deprecated template_file data source
 
 AWS-SPECIFIC TIPS
 -----------------
