@@ -1,0 +1,59 @@
+Terraform EC2 Cheatsheet (Complete)
+
+Core Arguments
+
+-   ami
+-   instance_type
+-   availability_zone
+-   region
+
+Networking
+
+-   subnet_id
+-   vpc_security_group_ids
+-   associate_public_ip_address
+-   private_ip
+-   source_dest_check
+
+Storage
+
+-   root_block_device.volume_size
+-   root_block_device.volume_type
+-   root_block_device.delete_on_termination
+-   ebs_block_device.device_name
+-   ebs_block_device.volume_size
+-   ebs_block_device.volume_type
+
+Access & Identity
+
+-   key_name
+-   iam_instance_profile
+
+Monitoring & Metadata
+
+-   monitoring
+-   user_data
+-   user_data_base64
+-   metadata_options.http_endpoint
+-   metadata_options.http_tokens
+-   metadata_options.instance_metadata_tags
+
+Lifecycle & Behaviour
+
+-   disable_api_termination
+-   instance_initiated_shutdown_behavior
+-   tenancy
+-   ebs_optimized
+
+Tags
+
+-   tags
+-   tags_all
+
+Other Useful Attributes
+
+-   host_id
+-   placement_group
+-   enclave_options
+-   cpu_options
+-   maintenance_options
