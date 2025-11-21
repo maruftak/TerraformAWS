@@ -1,0 +1,285 @@
+TERRAFORM CONFIGURATION BASICS
+===============================
+
+TERRAFORM BLOCK
+---------------
+terraform {
+  required_version = ">= 1.0"
+  
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  
+  backend "s3" {
+    bucket = "my-terraform-state"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+PROVIDER CONFIGURATION
+----------------------
+provider "aws" {
+  region  = var.aws_region
+  profile = "default"
+  
+  default_tags {
+    tags = {
+      Environment = var.environment
+      ManagedBy   = "Terraform"
+    }
+  }
+}
+
+VARIABLES
+---------
+# Variable Declaration
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]
+}
+
+variable "tags" {
+  description = "Resource tags"
+  type        = map(string)
+  default     = {}
+}
+
+# Variable Types
+type = string
+type = number
+type = bool
+type = list(string)
+type = set(string)
+type = map(string)
+type = object({ name = string, age = number })
+type = tuple([string, number, bool])
+
+# Variable Validation
+variable "instance_type" {
+  type = string
+  
+  validation {
+    condition     = contains(["t2.micro", "t2.small", "t2.medium"], var.instance_type)
+    error_message = "Instance type must be t2.micro, t2.small, or t2.medium."
+  }
+}
+
+OUTPUTS
+-------
+output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.web.id
+}
+
+output "instance_public_ip" {
+  description = "Public IP of EC2 instance"
+  value       = aws_instance.web.public_ip
+  sensitive   = true
+}
+
+LOCALS
+------
+locals {
+  common_tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+  
+  name_prefix = "${var.project_name}-${var.environment}"
+}
+
+# Usage
+resource "aws_instance" "web" {
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "${local.name_prefix}-web"
+    }
+  )
+}
+
+DATA SOURCES
+------------
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+  
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+RESOURCE SYNTAX
+---------------
+resource "resource_type" "resource_name" {
+  argument1 = value1
+  argument2 = value2
+  
+  nested_block {
+    nested_argument = value
+  }
+}
+
+# Example
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
+  
+  tags = {
+    Name = "WebServer"
+  }
+}
+
+RESOURCE META-ARGUMENTS
+-----------------------
+# depends_on
+resource "aws_instance" "web" {
+  depends_on = [aws_security_group.web_sg]
+}
+
+# count
+resource "aws_instance" "web" {
+  count         = 3
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  
+  tags = {
+    Name = "WebServer-${count.index}"
+  }
+}
+
+# for_each
+resource "aws_instance" "web" {
+  for_each = toset(["dev", "staging", "prod"])
+  
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  
+  tags = {
+    Name = "WebServer-${each.key}"
+  }
+}
+
+# lifecycle
+resource "aws_instance" "web" {
+  lifecycle {
+    create_before_destroy = true
+    prevent_destroy       = true
+    ignore_changes        = [tags]
+  }
+}
+
+# provisioner
+resource "aws_instance" "web" {
+  provisioner "local-exec" {
+    command = "echo ${self.private_ip} >> private_ips.txt"
+  }
+  
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y nginx"
+    ]
+  }
+}
+
+MODULES
+-------
+# Module Usage
+module "vpc" {
+  source = "./modules/vpc"
+  
+  vpc_cidr = var.vpc_cidr
+  name     = var.vpc_name
+  
+  tags = local.common_tags
+}
+
+# Access Module Outputs
+resource "aws_instance" "web" {
+  subnet_id = module.vpc.public_subnet_ids[0]
+}
+
+DYNAMIC BLOCKS
+--------------
+resource "aws_security_group" "web" {
+  name = "web-sg"
+  
+  dynamic "ingress" {
+    for_each = var.ingress_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+}
+
+CONDITIONAL EXPRESSIONS
+-----------------------
+resource "aws_instance" "web" {
+  instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
+  
+  count = var.create_instance ? 1 : 0
+}
+
+FUNCTIONS
+---------
+# String Functions
+upper(string)
+lower(string)
+title(string)
+trimspace(string)
+format("Hello %s", var.name)
+
+# Collection Functions
+length(list)
+concat(list1, list2)
+merge(map1, map2)
+lookup(map, key, default)
+element(list, index)
+contains(list, value)
+
+# Type Conversion
+tostring(value)
+tonumber(value)
+tobool(value)
+tolist(value)
+toset(value)
+tomap(value)
+
+# Filesystem Functions
+file(path)
+fileexists(path)
+templatefile(path, vars)
+
+# Date/Time Functions
+timestamp()
+formatdate(spec, timestamp)
+
+TERRAFORM FILE STRUCTURE
+-------------------------
+main.tf           # Main configuration
+variables.tf      # Variable declarations
+outputs.tf        # Output declarations
+terraform.tfvars  # Variable values (don't commit secrets!)
+versions.tf       # Provider version constraints
+backend.tf        # Backend configuration

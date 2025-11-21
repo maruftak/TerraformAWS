@@ -1,0 +1,258 @@
+AWS SERVICES OVERVIEW FOR TERRAFORM
+====================================
+
+COMPUTE SERVICES
+----------------
+
+EC2 (Elastic Compute Cloud)
+- Virtual servers in the cloud
+- Resource: aws_instance
+- Key Concepts: AMI, instance types, security groups, key pairs
+- Use Cases: Web servers, application servers, batch processing
+
+Lambda
+- Serverless compute service
+- Resource: aws_lambda_function
+- Key Concepts: Function, runtime, handler, triggers
+- Use Cases: Event-driven processing, APIs, automation
+
+ECS (Elastic Container Service)
+- Container orchestration service
+- Resources: aws_ecs_cluster, aws_ecs_service, aws_ecs_task_definition
+- Key Concepts: Clusters, services, tasks, containers
+- Use Cases: Microservices, containerized applications
+
+EKS (Elastic Kubernetes Service)
+- Managed Kubernetes service
+- Resource: aws_eks_cluster
+- Key Concepts: Control plane, worker nodes, pods
+- Use Cases: Container orchestration, cloud-native apps
+
+STORAGE SERVICES
+----------------
+
+S3 (Simple Storage Service)
+- Object storage service
+- Resource: aws_s3_bucket
+- Key Concepts: Buckets, objects, versioning, lifecycle policies
+- Use Cases: Static websites, backups, data lakes
+
+EBS (Elastic Block Store)
+- Block storage for EC2
+- Resource: aws_ebs_volume
+- Key Concepts: Volumes, snapshots, IOPS, volume types
+- Use Cases: Database storage, file systems
+
+EFS (Elastic File System)
+- Managed NFS file system
+- Resource: aws_efs_file_system
+- Key Concepts: Mount targets, performance modes, throughput modes
+- Use Cases: Shared storage, content management
+
+Glacier
+- Long-term archival storage
+- Resource: aws_glacier_vault
+- Key Concepts: Vaults, archives, retrieval options
+- Use Cases: Compliance, long-term backups
+
+DATABASE SERVICES
+-----------------
+
+RDS (Relational Database Service)
+- Managed relational databases
+- Resource: aws_db_instance
+- Supported Engines: MySQL, PostgreSQL, MariaDB, Oracle, SQL Server
+- Key Concepts: Multi-AZ, read replicas, parameter groups
+- Use Cases: Transactional applications, web applications
+
+DynamoDB
+- NoSQL database service
+- Resource: aws_dynamodb_table
+- Key Concepts: Tables, items, partition keys, sort keys
+- Use Cases: Session storage, gaming, IoT
+
+ElastiCache
+- In-memory caching service
+- Resources: aws_elasticache_cluster
+- Engines: Redis, Memcached
+- Use Cases: Session storage, caching, real-time analytics
+
+Aurora
+- MySQL and PostgreSQL compatible database
+- Resource: aws_rds_cluster
+- Key Concepts: Cluster, instances, endpoints
+- Use Cases: High-performance applications, enterprise workloads
+
+NETWORKING SERVICES
+-------------------
+
+VPC (Virtual Private Cloud)
+- Isolated network environment
+- Resource: aws_vpc
+- Key Concepts: Subnets, route tables, internet gateways, NAT gateways
+- Use Cases: Network isolation, hybrid cloud
+
+Route 53
+- DNS web service
+- Resources: aws_route53_zone, aws_route53_record
+- Key Concepts: Hosted zones, record sets, routing policies
+- Use Cases: Domain management, traffic routing
+
+CloudFront
+- Content Delivery Network (CDN)
+- Resource: aws_cloudfront_distribution
+- Key Concepts: Origins, behaviors, cache policies
+- Use Cases: Static content delivery, video streaming
+
+ELB (Elastic Load Balancing)
+- Load balancing service
+- Resources: aws_lb, aws_alb, aws_nlb
+- Types: Application Load Balancer, Network Load Balancer, Classic
+- Use Cases: High availability, traffic distribution
+
+VPN
+- Virtual Private Network
+- Resources: aws_vpn_gateway, aws_vpn_connection
+- Key Concepts: Customer gateway, virtual private gateway
+- Use Cases: Hybrid connectivity, secure access
+
+Direct Connect
+- Dedicated network connection to AWS
+- Resource: aws_dx_connection
+- Key Concepts: Virtual interfaces, link aggregation groups
+- Use Cases: High bandwidth, consistent network performance
+
+SECURITY & IDENTITY
+--------------------
+
+IAM (Identity and Access Management)
+- Access control service
+- Resources: aws_iam_user, aws_iam_role, aws_iam_policy
+- Key Concepts: Users, groups, roles, policies
+- Use Cases: Authentication, authorization, access control
+
+KMS (Key Management Service)
+- Encryption key management
+- Resource: aws_kms_key
+- Key Concepts: Customer master keys, encryption, grants
+- Use Cases: Data encryption, compliance
+
+Secrets Manager
+- Secret storage and rotation
+- Resource: aws_secretsmanager_secret
+- Key Concepts: Secrets, versions, rotation
+- Use Cases: Database credentials, API keys
+
+WAF (Web Application Firewall)
+- Web application protection
+- Resource: aws_waf_web_acl
+- Key Concepts: Rules, conditions, actions
+- Use Cases: SQL injection protection, DDoS mitigation
+
+Security Groups
+- Virtual firewall for instances
+- Resource: aws_security_group
+- Key Concepts: Inbound rules, outbound rules, stateful
+- Use Cases: Network access control
+
+MONITORING & MANAGEMENT
+------------------------
+
+CloudWatch
+- Monitoring and observability service
+- Resources: aws_cloudwatch_metric_alarm, aws_cloudwatch_log_group
+- Key Concepts: Metrics, alarms, logs, dashboards
+- Use Cases: Performance monitoring, alerting, log analysis
+
+CloudTrail
+- AWS API call logging
+- Resource: aws_cloudtrail
+- Key Concepts: Trails, events, S3 storage
+- Use Cases: Audit logging, compliance, security analysis
+
+Systems Manager
+- Operations management service
+- Resources: aws_ssm_parameter, aws_ssm_document
+- Key Concepts: Parameter Store, Session Manager, Run Command
+- Use Cases: Configuration management, automation
+
+Config
+- Resource inventory and compliance
+- Resource: aws_config_configuration_recorder
+- Key Concepts: Config rules, conformance packs
+- Use Cases: Compliance auditing, resource tracking
+
+MESSAGING & INTEGRATION
+------------------------
+
+SQS (Simple Queue Service)
+- Message queue service
+- Resource: aws_sqs_queue
+- Key Concepts: Standard queues, FIFO queues, dead-letter queues
+- Use Cases: Decoupling applications, async processing
+
+SNS (Simple Notification Service)
+- Pub/Sub messaging service
+- Resource: aws_sns_topic
+- Key Concepts: Topics, subscriptions, protocols
+- Use Cases: Notifications, fan-out patterns
+
+EventBridge
+- Event bus service
+- Resource: aws_cloudwatch_event_rule
+- Key Concepts: Event buses, rules, targets
+- Use Cases: Event-driven architectures, workflow automation
+
+Step Functions
+- Workflow orchestration
+- Resource: aws_sfn_state_machine
+- Key Concepts: State machines, states, transitions
+- Use Cases: Complex workflows, microservice orchestration
+
+APPLICATION SERVICES
+--------------------
+
+API Gateway
+- API management service
+- Resource: aws_api_gateway_rest_api
+- Key Concepts: Resources, methods, stages, integrations
+- Use Cases: REST APIs, WebSocket APIs, HTTP APIs
+
+Cognito
+- User authentication service
+- Resources: aws_cognito_user_pool, aws_cognito_identity_pool
+- Key Concepts: User pools, identity pools, federation
+- Use Cases: User sign-up/sign-in, mobile apps
+
+AppSync
+- GraphQL API service
+- Resource: aws_appsync_graphql_api
+- Key Concepts: Schemas, resolvers, data sources
+- Use Cases: Real-time data sync, GraphQL APIs
+
+ANALYTICS SERVICES
+------------------
+
+Athena
+- Serverless query service
+- Resource: aws_athena_database
+- Key Concepts: Databases, tables, queries, workgroups
+- Use Cases: S3 data analysis, log analysis
+
+Kinesis
+- Real-time data streaming
+- Resources: aws_kinesis_stream, aws_kinesis_firehose_delivery_stream
+- Key Concepts: Shards, data streams, delivery streams
+- Use Cases: Log processing, real-time analytics
+
+EMR (Elastic MapReduce)
+- Big data processing
+- Resource: aws_emr_cluster
+- Key Concepts: Clusters, steps, applications
+- Use Cases: Data processing, machine learning
+
+Glue
+- ETL service
+- Resources: aws_glue_catalog_database, aws_glue_job
+- Key Concepts: Data catalog, crawlers, jobs
+- Use Cases: Data preparation, ETL workflows

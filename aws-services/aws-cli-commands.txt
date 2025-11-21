@@ -1,0 +1,194 @@
+AWS CLI COMMANDS QUICK REFERENCE
+=================================
+
+CONFIGURATION
+-------------
+aws configure                           # Configure AWS CLI credentials
+aws configure list                      # List configuration data
+aws configure get region                # Get specific configuration value
+aws configure set region us-east-1      # Set specific configuration value
+aws configure --profile myprofile       # Configure named profile
+
+CREDENTIAL MANAGEMENT
+---------------------
+aws sts get-caller-identity            # Get current IAM identity
+aws sts assume-role --role-arn ARN     # Assume an IAM role
+
+EC2 COMMANDS
+------------
+# Instances
+aws ec2 describe-instances                              # List all instances
+aws ec2 describe-instances --instance-ids i-1234567890  # Describe specific instance
+aws ec2 run-instances --image-id ami-xxx --instance-type t2.micro  # Launch instance
+aws ec2 start-instances --instance-ids i-1234567890    # Start instance
+aws ec2 stop-instances --instance-ids i-1234567890     # Stop instance
+aws ec2 terminate-instances --instance-ids i-1234567890  # Terminate instance
+
+# AMIs
+aws ec2 describe-images --owners amazon                 # List Amazon AMIs
+aws ec2 create-image --instance-id i-xxx --name "MyAMI"  # Create AMI from instance
+
+# Security Groups
+aws ec2 describe-security-groups                        # List security groups
+aws ec2 create-security-group --group-name MyGroup --description "My SG"
+aws ec2 authorize-security-group-ingress --group-id sg-xxx --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+# Key Pairs
+aws ec2 describe-key-pairs                              # List key pairs
+aws ec2 create-key-pair --key-name MyKeyPair            # Create key pair
+
+# Volumes
+aws ec2 describe-volumes                                # List volumes
+aws ec2 create-volume --size 10 --availability-zone us-east-1a  # Create volume
+aws ec2 attach-volume --volume-id vol-xxx --instance-id i-xxx --device /dev/sdf
+
+S3 COMMANDS
+-----------
+aws s3 ls                                  # List all buckets
+aws s3 ls s3://bucket-name                 # List objects in bucket
+aws s3 mb s3://bucket-name                 # Create bucket
+aws s3 rb s3://bucket-name                 # Remove empty bucket
+aws s3 rb s3://bucket-name --force         # Remove bucket and all objects
+aws s3 cp file.txt s3://bucket-name/       # Copy file to S3
+aws s3 cp s3://bucket-name/file.txt .      # Copy file from S3
+aws s3 sync . s3://bucket-name/            # Sync directory to S3
+aws s3 rm s3://bucket-name/file.txt        # Delete object
+aws s3 presign s3://bucket-name/file.txt   # Generate presigned URL
+
+# S3 API Commands
+aws s3api create-bucket --bucket my-bucket --region us-east-1
+aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled
+aws s3api get-bucket-versioning --bucket my-bucket
+aws s3api put-bucket-encryption --bucket my-bucket --server-side-encryption-configuration '{...}'
+
+IAM COMMANDS
+------------
+# Users
+aws iam list-users                         # List users
+aws iam create-user --user-name username   # Create user
+aws iam delete-user --user-name username   # Delete user
+aws iam get-user --user-name username      # Get user details
+
+# Groups
+aws iam list-groups                        # List groups
+aws iam create-group --group-name groupname  # Create group
+aws iam add-user-to-group --user-name user --group-name group
+
+# Roles
+aws iam list-roles                         # List roles
+aws iam create-role --role-name MyRole --assume-role-policy-document file://trust-policy.json
+aws iam attach-role-policy --role-name MyRole --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess
+
+# Policies
+aws iam list-policies                      # List policies
+aws iam create-policy --policy-name MyPolicy --policy-document file://policy.json
+aws iam attach-user-policy --user-name user --policy-arn arn
+
+# Access Keys
+aws iam create-access-key --user-name username  # Create access key
+aws iam list-access-keys --user-name username   # List access keys
+aws iam delete-access-key --user-name username --access-key-id KEYID
+
+VPC COMMANDS
+------------
+aws ec2 describe-vpcs                      # List VPCs
+aws ec2 create-vpc --cidr-block 10.0.0.0/16  # Create VPC
+aws ec2 describe-subnets                   # List subnets
+aws ec2 create-subnet --vpc-id vpc-xxx --cidr-block 10.0.1.0/24
+aws ec2 describe-route-tables              # List route tables
+aws ec2 describe-internet-gateways         # List internet gateways
+aws ec2 create-internet-gateway            # Create internet gateway
+aws ec2 attach-internet-gateway --vpc-id vpc-xxx --internet-gateway-id igw-xxx
+
+RDS COMMANDS
+------------
+aws rds describe-db-instances              # List RDS instances
+aws rds create-db-instance --db-instance-identifier mydb --db-instance-class db.t2.micro --engine mysql
+aws rds start-db-instance --db-instance-identifier mydb
+aws rds stop-db-instance --db-instance-identifier mydb
+aws rds delete-db-instance --db-instance-identifier mydb --skip-final-snapshot
+aws rds create-db-snapshot --db-snapshot-identifier snapshot --db-instance-identifier mydb
+aws rds describe-db-snapshots              # List snapshots
+
+LAMBDA COMMANDS
+---------------
+aws lambda list-functions                  # List functions
+aws lambda create-function --function-name MyFunction --runtime python3.9 --role arn --handler index.handler --zip-file fileb://function.zip
+aws lambda invoke --function-name MyFunction output.txt  # Invoke function
+aws lambda update-function-code --function-name MyFunction --zip-file fileb://function.zip
+aws lambda delete-function --function-name MyFunction
+
+CLOUDWATCH COMMANDS
+-------------------
+aws cloudwatch list-metrics                # List metrics
+aws cloudwatch get-metric-statistics --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=i-xxx --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z --period 3600 --statistics Average
+aws cloudwatch put-metric-alarm --alarm-name cpu-alarm --alarm-description "CPU usage" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80
+aws logs describe-log-groups               # List log groups
+aws logs tail /aws/lambda/my-function      # Tail log group
+aws logs filter-log-events --log-group-name /aws/lambda/my-function --filter-pattern "ERROR"
+
+ROUTE 53 COMMANDS
+-----------------
+aws route53 list-hosted-zones              # List hosted zones
+aws route53 create-hosted-zone --name example.com --caller-reference $(date +%s)
+aws route53 list-resource-record-sets --hosted-zone-id Z123456789
+aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch file://change.json
+
+DYNAMODB COMMANDS
+-----------------
+aws dynamodb list-tables                   # List tables
+aws dynamodb describe-table --table-name MyTable
+aws dynamodb scan --table-name MyTable     # Scan table
+aws dynamodb query --table-name MyTable --key-condition-expression "id = :id" --expression-attribute-values '{":id":{"S":"123"}}'
+aws dynamodb put-item --table-name MyTable --item '{"id":{"S":"123"},"name":{"S":"John"}}'
+aws dynamodb get-item --table-name MyTable --key '{"id":{"S":"123"}}'
+
+ECS COMMANDS
+------------
+aws ecs list-clusters                      # List clusters
+aws ecs describe-clusters --clusters cluster-name
+aws ecs list-services --cluster cluster-name
+aws ecs list-tasks --cluster cluster-name  # List tasks
+aws ecs run-task --cluster cluster-name --task-definition task-def
+aws ecs update-service --cluster cluster-name --service service-name --desired-count 3
+
+CLOUDFORMATION COMMANDS
+-----------------------
+aws cloudformation list-stacks             # List stacks
+aws cloudformation create-stack --stack-name MyStack --template-body file://template.yaml
+aws cloudformation update-stack --stack-name MyStack --template-body file://template.yaml
+aws cloudformation delete-stack --stack-name MyStack
+aws cloudformation describe-stacks --stack-name MyStack
+aws cloudformation validate-template --template-body file://template.yaml
+
+SYSTEMS MANAGER (SSM)
+---------------------
+aws ssm get-parameter --name parameter-name  # Get parameter
+aws ssm put-parameter --name param --value "value" --type String
+aws ssm describe-instance-information      # List managed instances
+aws ssm start-session --target i-xxx       # Start Session Manager session
+aws ssm send-command --instance-ids i-xxx --document-name "AWS-RunShellScript" --parameters commands=["ls -la"]
+
+GENERAL COMMANDS
+----------------
+aws help                                   # Get help
+aws <service> help                         # Get service help
+aws <service> <command> help               # Get command help
+aws --version                              # Show AWS CLI version
+aws --region us-west-2 <command>           # Specify region
+aws --profile myprofile <command>          # Use named profile
+aws --output json|text|table <command>     # Specify output format
+aws --no-verify-ssl <command>              # Disable SSL verification
+aws --endpoint-url http://localhost:4566 <command>  # Use custom endpoint (LocalStack)
+
+FILTERING AND QUERYING
+----------------------
+# JMESPath query examples
+aws ec2 describe-instances --query 'Reservations[].Instances[].InstanceId'
+aws ec2 describe-instances --query 'Reservations[].Instances[?State.Name==`running`]'
+aws s3api list-buckets --query 'Buckets[].Name'
+aws iam list-users --query 'Users[*].[UserName,CreateDate]' --output table
+
+# Filtering
+aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro"
+aws ec2 describe-instances --filters "Name=tag:Environment,Values=production"

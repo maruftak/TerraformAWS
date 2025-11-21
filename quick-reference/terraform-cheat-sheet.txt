@@ -1,0 +1,394 @@
+TERRAFORM QUICK REFERENCE GUIDE
+================================
+
+COMMON COMMANDS CHEAT SHEET
+----------------------------
+
+ESSENTIAL COMMANDS:
+terraform init                    Initialize directory
+terraform plan                    Preview changes
+terraform apply                   Apply changes
+terraform destroy                 Destroy resources
+terraform validate                Validate configuration
+terraform fmt                     Format code
+terraform show                    Show current state
+terraform output                  Show outputs
+
+STATE COMMANDS:
+terraform state list              List resources in state
+terraform state show RESOURCE     Show resource details
+terraform state mv SOURCE DEST    Rename resource
+terraform state rm RESOURCE       Remove from state
+terraform import TYPE.NAME ID     Import existing resource
+
+WORKSPACE COMMANDS:
+terraform workspace list          List workspaces
+terraform workspace new NAME      Create workspace
+terraform workspace select NAME   Switch workspace
+terraform workspace delete NAME   Delete workspace
+
+PROVIDER CONFIGURATION SNIPPETS
+--------------------------------
+
+AWS Provider:
+provider "aws" {
+  region  = "us-east-1"
+  profile = "default"
+}
+
+Multiple AWS Regions:
+provider "aws" {
+  alias  = "west"
+  region = "us-west-2"
+}
+
+resource "aws_instance" "west_server" {
+  provider = aws.west
+  # ...
+}
+
+VARIABLE TYPES REFERENCE
+------------------------
+
+String:
+variable "name" {
+  type    = string
+  default = "default-value"
+}
+
+Number:
+variable "count" {
+  type    = number
+  default = 1
+}
+
+Boolean:
+variable "enabled" {
+  type    = boolean
+  default = true
+}
+
+List:
+variable "zones" {
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1b"]
+}
+
+Map:
+variable "tags" {
+  type = map(string)
+  default = {
+    Environment = "dev"
+  }
+}
+
+Object:
+variable "config" {
+  type = object({
+    name    = string
+    enabled = bool
+    ports   = list(number)
+  })
+}
+
+COMMON RESOURCE PATTERNS
+-------------------------
+
+EC2 Instance:
+resource "aws_instance" "web" {
+  ami           = "ami-xxxxx"
+  instance_type = "t2.micro"
+  tags = { Name = "web-server" }
+}
+
+Security Group:
+resource "aws_security_group" "web" {
+  name        = "web-sg"
+  description = "Web traffic"
+  
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+S3 Bucket:
+resource "aws_s3_bucket" "data" {
+  bucket = "my-bucket"
+  tags   = { Name = "Data" }
+}
+
+resource "aws_s3_bucket_versioning" "data" {
+  bucket = aws_s3_bucket.data.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+VPC:
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  tags = { Name = "main-vpc" }
+}
+
+Subnet:
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = { Name = "public-subnet" }
+}
+
+BUILT-IN FUNCTIONS QUICK REFERENCE
+-----------------------------------
+
+STRING FUNCTIONS:
+upper(string)              # Convert to uppercase
+lower(string)              # Convert to lowercase
+title(string)              # Title case
+trimspace(string)          # Remove whitespace
+format(spec, values...)    # Format string
+join(separator, list)      # Join list to string
+split(separator, string)   # Split string to list
+replace(string, old, new)  # Replace in string
+substr(string, offset, len)# Substring
+
+COLLECTION FUNCTIONS:
+length(list/map)           # Get length
+concat(list1, list2)       # Concatenate lists
+merge(map1, map2)          # Merge maps
+lookup(map, key, default)  # Get map value
+element(list, index)       # Get list element
+contains(list, value)      # Check if contains
+keys(map)                  # Get map keys
+values(map)                # Get map values
+flatten(list)              # Flatten nested list
+distinct(list)             # Remove duplicates
+sort(list)                 # Sort list
+reverse(list)              # Reverse list
+slice(list, start, end)    # Slice list
+
+NUMERIC FUNCTIONS:
+min(numbers...)            # Minimum value
+max(numbers...)            # Maximum value
+abs(number)                # Absolute value
+ceil(number)               # Round up
+floor(number)              # Round down
+log(number, base)          # Logarithm
+pow(number, power)         # Power
+signum(number)             # Sign of number
+
+TYPE CONVERSION:
+tostring(value)            # Convert to string
+tonumber(value)            # Convert to number
+tobool(value)              # Convert to bool
+tolist(value)              # Convert to list
+toset(value)               # Convert to set
+tomap(value)               # Convert to map
+
+CONDITIONAL EXPRESSIONS:
+condition ? true_val : false_val
+var.env == "prod" ? "large" : "small"
+
+FOR EXPRESSIONS:
+[for item in list : transform]
+{for k, v in map : k => v}
+[for i in range(5) : i * 2]
+
+DYNAMIC BLOCKS:
+dynamic "block_name" {
+  for_each = var.list
+  content {
+    key = block_name.value
+  }
+}
+
+DATA SOURCES QUICK REFERENCE
+-----------------------------
+
+AWS AMI:
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-*"]
+  }
+}
+
+AWS Availability Zones:
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+AWS VPC:
+data "aws_vpc" "default" {
+  default = true
+}
+
+AWS Subnet:
+data "aws_subnet" "selected" {
+  id = var.subnet_id
+}
+
+AWS Caller Identity:
+data "aws_caller_identity" "current" {}
+# Access: data.aws_caller_identity.current.account_id
+
+AWS Region:
+data "aws_region" "current" {}
+# Access: data.aws_region.current.name
+
+TERRAFORM META-ARGUMENTS
+-------------------------
+
+depends_on:
+resource "aws_instance" "web" {
+  depends_on = [aws_security_group.web]
+  # ...
+}
+
+count:
+resource "aws_instance" "web" {
+  count = 3
+  # Access: count.index
+}
+
+for_each:
+resource "aws_instance" "web" {
+  for_each = toset(["a", "b", "c"])
+  # Access: each.key, each.value
+}
+
+lifecycle:
+resource "aws_instance" "web" {
+  lifecycle {
+    create_before_destroy = true
+    prevent_destroy       = false
+    ignore_changes        = [tags]
+  }
+}
+
+provider:
+resource "aws_instance" "web" {
+  provider = aws.west
+  # ...
+}
+
+BACKEND CONFIGURATION
+---------------------
+
+S3 Backend:
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "project/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-locks"
+  }
+}
+
+Local Backend:
+terraform {
+  backend "local" {
+    path = "terraform.tfstate"
+  }
+}
+
+TERRAFORM EXPRESSIONS
+---------------------
+
+References:
+var.variable_name              # Variable
+local.local_name               # Local value
+module.module_name.output_name # Module output
+data.type.name.attribute       # Data source
+resource.type.name.attribute   # Resource
+
+Operators:
+==, !=                         # Equality
+<, >, <=, >=                   # Comparison
+&&, ||, !                      # Logical
++, -, *, /, %                  # Arithmetic
+
+COMMON ERROR FIXES
+------------------
+
+Error: Provider not found
+Fix: terraform init
+
+Error: State lock
+Fix: terraform force-unlock LOCK_ID
+
+Error: Resource already exists
+Fix: terraform import TYPE.NAME ID
+
+Error: Cycle dependency
+Fix: Review depends_on and references
+
+Error: Invalid credentials
+Fix: Check AWS credentials and permissions
+
+USEFUL ALIASES
+--------------
+
+alias tf='terraform'
+alias tfi='terraform init'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfd='terraform destroy'
+alias tfo='terraform output'
+alias tfv='terraform validate'
+alias tff='terraform fmt'
+
+FILE STRUCTURE EXAMPLE
+----------------------
+
+project/
+├── main.tf              # Main resources
+├── variables.tf         # Variable declarations
+├── outputs.tf           # Output declarations
+├── terraform.tfvars     # Variable values
+├── versions.tf          # Version constraints
+├── backend.tf           # Backend config
+├── providers.tf         # Provider config
+└── modules/
+    └── vpc/
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
+
+ENVIRONMENT VARIABLES
+---------------------
+
+TF_LOG=DEBUG              # Enable debug logging
+TF_LOG_PATH=terraform.log # Set log file
+AWS_PROFILE=myprofile     # AWS profile
+AWS_REGION=us-east-1      # AWS region
+TF_VAR_name=value         # Set variable
+
+TYPICAL WORKFLOW
+----------------
+
+1. Write configuration
+2. terraform init
+3. terraform fmt
+4. terraform validate
+5. terraform plan
+6. Review plan output
+7. terraform apply
+8. terraform output (view outputs)
+9. Make changes as needed
+10. terraform destroy (when done)
