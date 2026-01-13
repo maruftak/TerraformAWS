@@ -1,0 +1,91 @@
+TERRAFORM BASIC COMMANDS REFERENCE
+===================================
+
+INITIALIZATION AND SETUP
+-------------------------
+terraform init              # Initialize a Terraform working directory
+terraform init -upgrade     # Upgrade providers to latest version
+terraform init -reconfigure # Reconfigure backend ignoring existing config
+
+PLANNING AND VALIDATION
+------------------------
+terraform plan              # Generate and show execution plan
+terraform plan -out=plan.tfplan  # Save plan to a file
+terraform validate          # Validate Terraform configuration files
+terraform fmt               # Format Terraform files to canonical format
+terraform fmt -recursive    # Format files in subdirectories recursively
+terraform fmt -check        # Check if files are formatted, don't modify
+
+APPLYING CHANGES
+----------------
+terraform apply             # Build or change infrastructure
+terraform apply -auto-approve  # Apply without interactive approval
+terraform apply plan.tfplan # Apply a saved plan file
+terraform apply -var="key=value"  # Set a variable on command line
+terraform apply -var-file="variables.tfvars"  # Use variable file
+
+DESTROYING RESOURCES
+--------------------
+terraform destroy           # Destroy Terraform-managed infrastructure
+terraform destroy -auto-approve  # Destroy without confirmation
+terraform destroy -target=resource_type.resource_name  # Destroy specific resource
+
+STATE MANAGEMENT
+----------------
+terraform show              # Show current state or saved plan
+terraform state list        # List resources in state
+terraform state show resource_type.resource_name  # Show specific resource
+terraform state mv          # Move/rename resource in state
+terraform state rm          # Remove resource from state
+terraform state pull        # Download and output state file
+terraform state push        # Upload local state to remote storage
+terraform refresh           # Update state to match real resources
+
+WORKSPACE MANAGEMENT
+--------------------
+terraform workspace list    # List workspaces
+terraform workspace new name  # Create new workspace
+terraform workspace select name  # Switch to workspace
+terraform workspace delete name  # Delete workspace
+terraform workspace show    # Show current workspace
+
+IMPORTING RESOURCES
+-------------------
+terraform import resource_type.resource_name id  # Import existing resource
+
+OUTPUT VALUES
+-------------
+terraform output            # Show all output values
+terraform output output_name  # Show specific output value
+
+PROVIDER MANAGEMENT
+-------------------
+terraform providers         # Show providers required by configuration
+terraform providers lock    # Create or update provider dependency locks
+terraform providers mirror path  # Save providers to local directory
+
+CONSOLE AND DEBUGGING
+---------------------
+terraform console           # Interactive console for expressions
+terraform graph             # Generate visual dependency graph
+TF_LOG=DEBUG terraform apply  # Enable debug logging
+TF_LOG_PATH=terraform.log   # Set log file path
+
+MISCELLANEOUS
+-------------
+terraform version           # Show Terraform version
+terraform -help             # Show help for commands
+terraform get               # Download and install modules
+terraform taint resource    # Mark resource for recreation (deprecated in 0.15.2+)
+terraform untaint resource  # Remove taint from resource (deprecated in 0.15.2+)
+
+BEST PRACTICES
+--------------
+1. Always run 'terraform fmt' before committing
+2. Use 'terraform validate' to check syntax
+3. Review 'terraform plan' output before applying
+4. Use version constraints for providers and modules
+5. Store state remotely for team collaboration
+6. Use workspaces for environment separation
+7. Never commit .tfstate files to version control
+8. Use variables and locals for reusable configurations
